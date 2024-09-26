@@ -1,7 +1,9 @@
-pub mod validator;
+use formater::format_csv_to_dashed_list;
 
+pub mod validator;
+pub mod formater;
 fn main() {
-    println!("Yellow horld")
+    let result = format_csv_to_dashed_list("csv, butts, nutts, cruts");
 }
 
 // // Use some sort of Crate to style the CLI

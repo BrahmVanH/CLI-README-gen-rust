@@ -1,4 +1,15 @@
-// format csv to list
+//  This will format a user=entered csv string to a formatted bulleted list string
+pub fn format_csv_to_dashed_list(csv: &str) -> String {
+    println!("csv {}", csv);
+    let values: Vec<String> = csv.split(',').map(|s| s.trim().to_string()).collect();
+    println!("values {:?}", &values);
+    let result: Vec<String> = values.into_iter().map(|value| format!("- {}", value.trim())).collect();
+    println!("result {:?}", &result);
+
+    result.join("\n")
+}
+
+
 
 #[cfg(test)]
 mod tests {
