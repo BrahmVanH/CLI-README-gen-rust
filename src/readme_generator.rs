@@ -52,9 +52,8 @@ pub fn format_readme_markdown(user_input: &UserInput) -> Result<String, serde_js
         ..
     } = user_input;
 
-    Ok(
-        format!(
-            "# {title}
+    let string = format!(
+        "# {title}
   
   {license_badge_string}
 
@@ -113,15 +112,12 @@ pub fn format_readme_markdown(user_input: &UserInput) -> Result<String, serde_js
 
   >GitHub: [{github_username}](https://github.com/{github_username})
   "
-        )
-    )
+    );
+    Ok(string)
 }
 
-
-
-
 fn get_licenses_json() -> std::io::Result<File> {
-    let licenses_path = Path::new("./licenses.json");
+    let licenses_path = Path::new("src/licenses.json");
     let file = File::open(licenses_path)?;
     Ok(file)
 }

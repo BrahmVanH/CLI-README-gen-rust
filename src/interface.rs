@@ -2,10 +2,9 @@ use std::io::*;
 use crate::validator::validate_email;
 use crate::formater::format_csv_to_dashed_list;
 use dialoguer::Select;
-
+use serde_json::to_string;
 
 #[derive(Debug, Default)]
-
 pub struct UserInput {
     pub github_username: String,
     pub email: String,
@@ -20,9 +19,6 @@ pub struct UserInput {
     pub ways_to_contribute: String,
     pub tests: String,
 }
-
-
-
 
 impl UserInput {
     pub fn new() -> Self {
@@ -74,7 +70,9 @@ impl UserInput {
     }
 }
 
-pub fn collect_input(user_input: &mut UserInput) -> std::result::Result<&UserInput, std::io::Error> {
+pub fn collect_input(
+    user_input: &mut UserInput
+) -> std::result::Result<&UserInput, std::io::Error> {
     // let mut user_input = UserInput::new();
 
     let stdin = stdin();
@@ -84,49 +82,46 @@ pub fn collect_input(user_input: &mut UserInput) -> std::result::Result<&UserInp
     println!("Please enter your github username to be included in your README");
 
     handle.read_line(&mut input)?;
-    user_input.set_gh_username(&input);
+    user_input.set_gh_username(&input.trim().to_string());
     input.clear();
 
-    println!("Please enter your email address to be included in your README");
-
-    handle.read_line(&mut input)?;
-    input = input.trim().to_string();
-
-    println!("email {}", &input);
-    while validate_email(&input) == false {
+    loop {
         input.clear();
         println!("Please enter a valid email address, or at least something that looks like one");
         handle.read_line(&mut input)?;
-    }
-    
 
-    user_input.set_email(&input);
+        if validate_email(&input.trim()) {
+            break;
+        }
+    }
+
+    user_input.set_email(&input.trim().to_string());
     input.clear();
 
     println!("Please entire a title for your README.");
     handle.read_line(&mut input)?;
 
-    user_input.set_title(&input);
+    user_input.set_title(&input.trim().to_string());
     input.clear();
 
     println!("Please enter a brief description explaining the what, why, and how of your project.");
     handle.read_line(&mut input)?;
-    user_input.set_description(&input);
+    user_input.set_description(&input.trim().to_string());
     input.clear();
 
     println!("Please enter installation instructions for your application.");
     handle.read_line(&mut input)?;
-    user_input.set_installation(&input);
+    user_input.set_installation(&input.trim().to_string());
     input.clear();
 
     println!("Please enter usage instruction for your application.");
     handle.read_line(&mut input)?;
-    user_input.set_usage(&input);
+    user_input.set_usage(&input.trim().to_string());
     input.clear();
 
     println!("Please enter credit information.");
     handle.read_line(&mut input)?;
-    user_input.set_credits(&input);
+    user_input.set_credits(&input.trim().to_string());
     input.clear();
 
     let choices = &["yes", "no"];
@@ -165,7 +160,7 @@ pub fn collect_input(user_input: &mut UserInput) -> std::result::Result<&UserInp
         let val = String::from("n/a");
         user_input.set_license(&val);
     } else {
-        user_input.set_license(&input);
+        user_input.set_license(&input.trim().to_string());
     }
     input.clear();
 
@@ -188,11 +183,11 @@ pub fn collect_input(user_input: &mut UserInput) -> std::result::Result<&UserInp
 
     println!("Please explain how other developers can contribute to your project.");
     handle.read_line(&mut input)?;
-    user_input.set_ways_to_contribute(&input);
+    user_input.set_ways_to_contribute(&input.trim().to_string());
 
     println!("Please list tests for your application.");
     handle.read_line(&mut input)?;
-    user_input.set_tests(&input);
+    user_input.set_tests(&input.trim().to_string());
     input.clear();
 
     Ok(user_input)

@@ -1,5 +1,6 @@
 use interface::UserInput;
 use std::fs::File;
+use std::io::Write;
 use std::path::Path;
 use serde_json;
 use markdown_gen::markdown::Markdown;
@@ -19,36 +20,16 @@ fn main() -> Result<(), serde_json::Error> {
     };
     let markdown_string: String = match readme_generator::format_readme_markdown(output) {
         Ok(string) => string,
-        Err(e) => {
-            eprintln!("Error generating markdown: {:?}", e);
-            String::new()
-        }
+        Err(e) => { String::new() }
     };
-    println!("markdown string {:?}", &markdown_string);
     let output_path = Path::new("dist/README.md");
-    let file = match File::create(output_path) {
+    let mut file = match File::create(&output_path) {
         Ok(file) => { file }
         Err(e) => {
             return Err(serde_json::Error::io(e));
         }
     };
-    let mut md = Markdown::new(file);
-    let string: &str = &markdown_string;
-    match md.write(string) {
-        Ok(_) => {
-            println!("check /dist for readme");
-            Ok(())
-        }
-        Err(e) => Err(serde_json::Error::io(e)),
-    }
-    //  {
-    //     Ok(file) => {
-    //         println!("check /dist for readme");
-    //         file
-    //     }
-    //     Err(e) => {
-    //         return Err(serde_json::Error::io(e));
-    //     }
-    // };
-    // md_file.write_all(BufWriter::new(markdown_string));
+    file.write_all(&markdown_string.as_bytes());
+    println!("README Successfully written. Check dist/ folder for result.");
+    Ok(())
 }
