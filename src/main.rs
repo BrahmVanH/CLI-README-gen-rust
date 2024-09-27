@@ -6,7 +6,8 @@ use std::io::Error;
 
 pub mod validator;
 pub mod formater;
-#[derive(Default)]
+
+#[derive(Debug, Default)]
 struct UserInput {
     github_username: String,
     email: String,
@@ -71,24 +72,37 @@ impl UserInput {
         self.tests = tests.to_string();
     }
 }
-fn main() {}
-
-fn collect_input() {
+fn main() {
     let mut user_input = UserInput::new();
+    let result = collect_input(&mut user_input);
+    println!("{:?}", &result);
+}
+
+fn collect_input(user_input: &mut UserInput) -> &UserInput {
+    // let mut user_input = UserInput::new();
 
     let stdin = stdin();
     let mut handle = stdin.lock();
     let mut input = String::new();
 
+    println!("Please enter your github username to be included in your README");
+
+    handle.read_line(&mut input);
+    user_input.set_gh_username(&input);
+    input.clear();
+
     println!("Please enter your email address to be included in your README");
 
     handle.read_line(&mut input);
+    input = input.trim().to_string();
 
-    while !validate_email(&input) {
+    println!("email {}", &input);
+    while validate_email(&input) == false {
         input.clear();
         println!("Please enter a valid email address, or at least something that looks like one");
         handle.read_line(&mut input).map_err(|e| e.to_string());
     }
+    
 
     user_input.set_email(&input);
     input.clear();
@@ -121,7 +135,7 @@ fn collect_input() {
 
     let choices = &["y", "n"];
     let include_license_input = Select::new()
-        .with_prompt("Would you like to include a license?")
+        .with_prompt("Would you like to include a license? ")
         .items(choices)
         .interact()
         .map_err(|e| e.to_string());
@@ -184,66 +198,6 @@ fn collect_input() {
     handle.read_line(&mut input);
     user_input.set_tests(&input);
     input.clear();
+
+    user_input
 }
-
-// // Use some sort of Crate to style the CLI
-
-// // io operation to take in user input
-// // validate user input (while loop )
-
-// // function (user input) -> markdown string
-// // function markdown string -> local file write
-
-// // helper functions for validation
-
-// // fn collect input
-//     // This will be called in main
-// // collect gh username
-// // validate fn
-//     // is_string? is_less_than_github_max_username_length?
-// let gh_username_prompt: String = "Please enter your GitHub username to be included in your README";
-// let github_username_input: String;
-
-// // collect email address
-// // fn validate
-//     // is_email? is < max char?
-
-// message:
-// let github_username_input: String;
-// let email_input: String;
-
-// message:
-// let github_username_input: String;
-// let email_input: String;
-// let title: String;
-// message:
-// let description: String;
-
-// message:
-// let installation: String;
-
-// message:
-// let usage: String;
-
-// message:
-// let credits: String;
-
-// message: '
-// let includeLicense: bool;
-
-// message: '',
-// choices: ['Apache 2.0', 'BSD 3-Clause', 'BSD 2-Clause', 'GPL v3', 'GPL v2', 'AGPL v3', 'LGPL v3', 'Unlicense', 'The Do What the Fuck You Want to Public License', 'MIT'],
-
-// // let license
-
-// message: '
-// let features: String;
-
-// message: '
-// let technologies: String;
-
-// message: '
-// let ways_to_contribute_input: String;
-
-// message: '
-// let tests_input
